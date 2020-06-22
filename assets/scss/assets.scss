@@ -1,0 +1,81 @@
+$txtc: rgb(255, 220, 252);
+@font-face {
+    font-family: "yoshi";
+    src: url("yoster.ttf")
+}
+
+body {
+    background: rgb(147,38,163);
+    background: linear-gradient(90deg, rgba(147,38,163,1) 0%, rgba(183,75,255,1) 25%, rgba(106,159,255,1) 50%, rgba(183,75,255,1) 75%, rgba(147,38,163,1) 100%);
+    width: 100%;
+    text-align: center;
+    color: $txtc;
+    font-family: "yoshi";
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.gamequiz {
+    display: flex;
+    width: 50%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.gamecover {
+    border: 3px white solid;
+    border-radius: 29px;
+    margin-bottom: 10px;
+    img {
+        border-radius: 25px;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.button {
+    background-color: rgb(125, 28, 163);
+    color: white;
+    padding: 5px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+  }
+
+.score {
+    font-size: 20px;
+}
+
+.right {
+    color: limegreen;
+}
+
+.closeEnough {
+    color: yellow;
+}
+
+.wrong {
+    color: red;
+}
+
+h1 {
+    font-size: 50px;
+    color: rgb(255, 235, 235);
+}
+
+header {
+    font-size: 20px;
+
+}
+
+.animate__animated.animate__zoomInUp {
+    animation-delay: 1s;
+  }

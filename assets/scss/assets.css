@@ -1,0 +1,101 @@
+@font-face {
+  font-family: "yoshi";
+  src: url("yoster.ttf");
+}
+
+body {
+  background: #9326a3;
+  background: -webkit-gradient(linear, left top, right top, from(#9326a3), color-stop(25%, #b74bff), color-stop(50%, #6a9fff), color-stop(75%, #b74bff), to(#9326a3));
+  background: linear-gradient(90deg, #9326a3 0%, #b74bff 25%, #6a9fff 50%, #b74bff 75%, #9326a3 100%);
+  width: 100%;
+  text-align: center;
+  color: #ffdcfc;
+  font-family: "yoshi";
+}
+
+main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.gamequiz {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 50%;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin: 10px;
+}
+
+.gamecover {
+  border: 3px white solid;
+  border-radius: 29px;
+  margin-bottom: 10px;
+}
+
+.gamecover img {
+  border-radius: 25px;
+  width: 100%;
+  height: 100%;
+}
+
+.button {
+  background-color: #7d1ca3;
+  color: white;
+  padding: 5px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+}
+
+.score {
+  font-size: 20px;
+}
+
+.right {
+  color: limegreen;
+}
+
+.closeEnough {
+  color: yellow;
+}
+
+.wrong {
+  color: red;
+}
+
+h1 {
+  font-size: 50px;
+  color: #ffebeb;
+}
+
+header {
+  font-size: 20px;
+}
+
+.animate__animated.animate__zoomInUp {
+  -webkit-animation-delay: 1s;
+          animation-delay: 1s;
+}
+/*# sourceMappingURL=assets.css.map */
