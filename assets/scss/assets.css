@@ -92,10 +92,17 @@ h1 {
 
 header {
   font-size: 20px;
+  margin-top: 20px;
 }
 
 .animate__animated.animate__zoomInUp {
   -webkit-animation-delay: 1s;
           animation-delay: 1s;
+}
+
+#return {
+  position: absolute;
+  top: 10px;
+  left: 50px;
 }
 /*# sourceMappingURL=assets.css.map */

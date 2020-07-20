@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"
+    />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/scss/assets.css">
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+    <link rel="icon" href="assets/images/favicon-16x16.png" type="image/png" sizes="16x16">
+    <title>The Video Game Cover Trivia</title>
+</head>
+
+<body>
+    <span id="return"><a href="index.html">Back to Home</a></span>
+    <header>
+        <p><b>Notes:</b></p>
+        <p>-Your goal is to guess the name of the game based on the game's cover art.</p>
+        <p>-A <span class="right">✔</span> symbol means your answer was correct, and you will be scored 1 point in your tally.</p>
+        <p>-A <span class="closeEnough">━</span> symbol means your answer was close enough to be considered correct, but it wasn't 100% accurate. You will be scored 0.5 on your tally.</p>
+        <p>-A <span class="wrong">✖</span> symbol means your answer was wrong, and you will receive no points on your tally.</p>
+    </header>
+    <main id="gamecontainer">
+
+    </main>
+    <p><input type="button" id="usersubmit" class="button" value="Submit Answers"><input type="button" id="reset" class="button" value="Reset Game"></p>
+    <b></b>Tally:</b> <div id="tally"></div>
+    <script src="assets/javascript/app.js">
+    </script>
+</body>
+
+</html>

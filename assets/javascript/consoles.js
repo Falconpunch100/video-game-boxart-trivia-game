@@ -4,6 +4,7 @@ var accessURL = "https://cors-anywhere.herokuapp.com/"
 var mugshots = "https://api-v3.igdb.com/character_mug_shots"
 var covers = "https://api-v3.igdb.com/covers"
 var gameArray = []
+
 const scorethreshold = 0.05
 
 function createOptions() {
@@ -35,8 +36,7 @@ async function grabGames() {
                     name: element.name,
                     platforms: element.platforms,
                     gameid: element.id,
-                    coverid: element.cover,
-                    url: element.url
+                    coverid: element.cover
                 })
             }
         }
@@ -86,11 +86,12 @@ function combineInfo(covers, names) {
         for (var j = 0; j < names.length; j++) {
             var element2 = names[j];
             if (element1.game === element2.gameid) {
-                combine.push({ name: element2, cover: element1.url })
+                combine.push({ name: element2.name, cover: element1.url, platforms: element2.platforms})
             }
         }
     }
     gameArray = Array.from(combine)
+    convertPlatformIDs()
     renderGames(combine)
 }
 
@@ -107,6 +108,7 @@ function renderGames(combined) {
             <input type="text" placeholder="Enter your answer here" class="useranswer">
         </form>
         <div class="score"></div>
+        <span class="answer"></span>
     </section>`
     }
     gamecontainer.innerHTML = htmlstring;
@@ -131,11 +133,11 @@ document.getElementById("usersubmit").addEventListener("click", getAnswers)
 
 function compareAnswers() {
     const options = {
-        includeScore: true,
-        keys: ['name.name'],
+        includeScore: true
     }
-    const fuse = new Fuse(gameArray, options)
+
     for (let index = 0; index < gameArray.length; index++) {
+        const fuse = new Fuse(gameArray[index].platforms, options)
         const element = gameArray[index];
         if (element.answer !== "") {
             const resultArr = fuse.search(element.answer)
@@ -149,14 +151,55 @@ function compareAnswers() {
     tallyUpScores()
 }
 
+//Will fuse similar platforms into one category, I.E. answering "Linux", "Microsoft Windows" or "PC" will all count as the correct answer.
+function convertPlatformIDs() {
+    for (var i = 0; i < gameArray.length; i++) {
+        var element = gameArray[i];
+        for (var j = 0; j < element.platforms.length; j++) {
+            var currentPlatformID = element.platforms[j];
+            for (var k = 0; k < consoles.length; k++) {
+                var currentConsole = consoles[k];
+                var altNames = currentConsole.id
+                if (typeof altNames === "object") {
+                    var found = altNames.findIndex(function (id) {
+                        if (id === currentPlatformID) {
+                            return true
+                        }
+                        else {
+                            return false
+                        }
+                    });
+                    if (found !== -1) {
+                        element.platforms[j] = currentConsole.name
+                    }
+                }
+                else if (currentPlatformID === currentConsole.id) {
+                    element.platforms[j] = currentConsole.name
+                }
+            }
+        }
+    }
+    removeDuplicates()
+}
+
+function removeDuplicates() {
+    for (var i = 0; i < gameArray.length; i++) {
+        var element = gameArray[i];
+        var multiPlatform = new Set(element.platforms)
+        var newPlatforms = [...multiPlatform]
+        console.log(newPlatforms)
+        element.platforms = newPlatforms
+    }
+}
+
 function tallyUpScores() {
     var scoreArray = document.getElementsByClassName("score")
-    var gameQuizArr = document.getElementsByClassName("gamequiz")
+    var answerArray = document.getElementsByClassName("answer")
     var numberCorrect = 0
     for (var i = 0; i < scoreArray.length; i++) {
         var element1 = scoreArray[i];
         var element2 = gameArray[i];
-        gameQuizArr[i].innerHTML+= `<span class="answer">Answer:</span>` + element2.name.name
+        answerArray[i].textContent = "Answer: " + element2.platforms
         if (element2.score < scorethreshold) {
             element1.innerHTML = `<span class="right">✔</span>`
             numberCorrect++
