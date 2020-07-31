@@ -3,7 +3,7 @@ var requestURL = "https://api-v3.igdb.com/games/"
 var accessURL = "https://cors-anywhere.herokuapp.com/"
 var covers = "https://api-v3.igdb.com/covers"
 var gameArray = []
-const scorethreshold = 0.05
+const scorethreshold = 0.10
 
 function createOptions() {
     var pizza = {
@@ -13,7 +13,7 @@ function createOptions() {
             Accept: "application/json"
         }
         ,
-        body: "fields name,cover,platforms,url; where id = (" + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + ");"
+        body: "fields name,cover,themes,url; where id = (" + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + ");"
     }
     return pizza;
 }
@@ -28,11 +28,11 @@ async function grabGames() {
         var data = await response.json()
         for (var i = 0; i < data.length; i++) {
             var element = data[i]
-            if (element.cover !== undefined && element.platforms !== undefined) {
+            if (element.cover !== undefined && element.themes !== undefined) {
                 ids.push(element.cover)
                 names.push({
                     name: element.name,
-                    platforms: element.platforms,
+                    themes: element.themes,
                     gameid: element.id,
                     coverid: element.cover,
                     url: element.url
@@ -85,12 +85,12 @@ function combineInfo(covers, names) {
         for (var j = 0; j < names.length; j++) {
             var element2 = names[j];
             if (element1.game === element2.gameid) {
-                combine.push({ name: element2.name, cover: element1.url, platforms: element2.platforms, url: element2.url})
+                combine.push({ name: element2.name, cover: element1.url, themes: element2.themes, url: element2.url})
             }
         }
     }
     gameArray = Array.from(combine)
-    convertPlatformIDs()
+    convertThemeIDs()
     renderGames(combine)
 }
 
@@ -137,7 +137,7 @@ function compareAnswers() {
     }
 
     for (let index = 0; index < gameArray.length; index++) {
-        const fuse = new Fuse(gameArray[index].platforms, options)
+        const fuse = new Fuse(gameArray[index].themes, options)
         const element = gameArray[index];
         if (element.answer !== "") {
             const resultArr = fuse.search(element.answer)
@@ -151,43 +151,18 @@ function compareAnswers() {
     tallyUpScores()
 }
 
-//Will fuse similar platforms into one category, I.E. answering "Linux", "Microsoft Windows" or "PC" will all count as the correct answer.
-function convertPlatformIDs() {
+function convertThemeIDs() {
     for (var i = 0; i < gameArray.length; i++) {
         var element = gameArray[i];
-        for (var j = 0; j < element.platforms.length; j++) {
-            var currentPlatformID = element.platforms[j];
-            for (var k = 0; k < consoles.length; k++) {
-                var currentConsole = consoles[k];
-                var altNames = currentConsole.id
-                if (typeof altNames === "object") {
-                    var found = altNames.findIndex(function (id) {
-                        if (id === currentPlatformID) {
-                            return true
-                        }
-                        else {
-                            return false
-                        }
-                    });
-                    if (found !== -1) {
-                        element.platforms[j] = currentConsole.name
-                    }
-                }
-                else if (currentPlatformID === currentConsole.id) {
-                    element.platforms[j] = currentConsole.name
+        for (var j = 0; j < element.themes.length; j++) {
+            var currentThemeID = element.themes[j];
+            for (var k = 0; k < themes.length; k++) {
+                var currentTheme = themes[k];
+                if (currentThemeID === currentTheme.id) {
+                    element.themes[j] = currentTheme.name
                 }
             }
         }
-    }
-    removeDuplicates()
-}
-
-function removeDuplicates() {
-    for (var i = 0; i < gameArray.length; i++) {
-        var element = gameArray[i];
-        var multiPlatform = new Set(element.platforms)
-        var newPlatforms = [...multiPlatform]
-        element.platforms = newPlatforms
     }
 }
 
@@ -199,7 +174,7 @@ function tallyUpScores() {
     for (var i = 0; i < scoreArray.length; i++) {
         var element1 = scoreArray[i];
         var element2 = gameArray[i];
-        answerArray[i].textContent = "Answer: " + element2.platforms
+        answerArray[i].textContent = "Answer: " + element2.themes
         urlArray[i].innerHTML = "<a target='_blank' href='" + element2.url + "'>Link</a>"
         if (element2.score < scorethreshold) {
             element1.innerHTML = `<span class="right">✔</span>`

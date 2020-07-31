@@ -3,7 +3,7 @@ var requestURL = "https://api-v3.igdb.com/games/"
 var accessURL = "https://cors-anywhere.herokuapp.com/"
 var covers = "https://api-v3.igdb.com/covers"
 var gameArray = []
-const scorethreshold = 0.05
+const scorethreshold = 0.15
 
 function createOptions() {
     var pizza = {
@@ -85,12 +85,11 @@ function combineInfo(covers, names) {
         for (var j = 0; j < names.length; j++) {
             var element2 = names[j];
             if (element1.game === element2.gameid) {
-                combine.push({ name: element2.name, cover: element1.url, platforms: element2.platforms, url: element2.url})
+                combine.push({ name: element2, cover: element1.url })
             }
         }
     }
     gameArray = Array.from(combine)
-    convertPlatformIDs()
     renderGames(combine)
 }
 
@@ -133,11 +132,11 @@ document.getElementById("usersubmit").addEventListener("click", getAnswers)
 
 function compareAnswers() {
     const options = {
-        includeScore: true
+        includeScore: true,
+        keys: ['name.name'],
     }
-
+    const fuse = new Fuse(gameArray, options)
     for (let index = 0; index < gameArray.length; index++) {
-        const fuse = new Fuse(gameArray[index].platforms, options)
         const element = gameArray[index];
         if (element.answer !== "") {
             const resultArr = fuse.search(element.answer)
@@ -151,46 +150,6 @@ function compareAnswers() {
     tallyUpScores()
 }
 
-//Will fuse similar platforms into one category, I.E. answering "Linux", "Microsoft Windows" or "PC" will all count as the correct answer.
-function convertPlatformIDs() {
-    for (var i = 0; i < gameArray.length; i++) {
-        var element = gameArray[i];
-        for (var j = 0; j < element.platforms.length; j++) {
-            var currentPlatformID = element.platforms[j];
-            for (var k = 0; k < consoles.length; k++) {
-                var currentConsole = consoles[k];
-                var altNames = currentConsole.id
-                if (typeof altNames === "object") {
-                    var found = altNames.findIndex(function (id) {
-                        if (id === currentPlatformID) {
-                            return true
-                        }
-                        else {
-                            return false
-                        }
-                    });
-                    if (found !== -1) {
-                        element.platforms[j] = currentConsole.name
-                    }
-                }
-                else if (currentPlatformID === currentConsole.id) {
-                    element.platforms[j] = currentConsole.name
-                }
-            }
-        }
-    }
-    removeDuplicates()
-}
-
-function removeDuplicates() {
-    for (var i = 0; i < gameArray.length; i++) {
-        var element = gameArray[i];
-        var multiPlatform = new Set(element.platforms)
-        var newPlatforms = [...multiPlatform]
-        element.platforms = newPlatforms
-    }
-}
-
 function tallyUpScores() {
     var scoreArray = document.getElementsByClassName("score")
     var answerArray = document.getElementsByClassName("answer")
@@ -199,8 +158,8 @@ function tallyUpScores() {
     for (var i = 0; i < scoreArray.length; i++) {
         var element1 = scoreArray[i];
         var element2 = gameArray[i];
-        answerArray[i].textContent = "Answer: " + element2.platforms
-        urlArray[i].innerHTML = "<a target='_blank' href='" + element2.url + "'>Link</a>"
+        answerArray[i].textContent = "Answer: " + element2.name.name
+        urlArray[i].innerHTML = "<a target='_blank' href='" + element2.name.url + "'>Link</a>"
         if (element2.score < scorethreshold) {
             element1.innerHTML = `<span class="right">✔</span>`
             numberCorrect++

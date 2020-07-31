@@ -1,6 +1,4 @@
- 
-
-var consoles = [
+ var consoles = [
     {
         id: [3, 6, 14, 82],
         name: "PC",
@@ -108,17 +106,17 @@ var consoles = [
 
     {
         id: 29,
-        name: "Sega Mega Drive"
+        name: "Mega Drive"
     },
 
     {
         id: 30,
-        name: "Sega 32X"
+        name: "32X"
     },
 
     {
         id: 32,
-        name: "Sega Saturn"
+        name: "Saturn"
     },
 
     {
@@ -133,7 +131,7 @@ var consoles = [
 
     {
         id: 35,
-        name: "Sega Game Gear"
+        name: "Game Gear"
     },
 
     {

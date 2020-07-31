@@ -1,10 +1,9 @@
 var APIkey = "a560f7eadd544b97f2cf3e35a39e2daf"
 var requestURL = "https://api-v3.igdb.com/games/"
 var accessURL = "https://cors-anywhere.herokuapp.com/"
-var mugshots = "https://api-v3.igdb.com/character_mug_shots"
 var covers = "https://api-v3.igdb.com/covers"
 var gameArray = []
-const scorethreshold = 0.05
+const scorethreshold = 0.2
 
 function createOptions() {
     var pizza = {
@@ -14,7 +13,7 @@ function createOptions() {
             Accept: "application/json"
         }
         ,
-        body: "fields name,cover,platforms,url; where id = (" + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + ");"
+        body: "fields name,cover,genres,url; where id = (" + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + "," + getRandomGameNumber(0, 100000) + ");"
     }
     return pizza;
 }
@@ -29,11 +28,11 @@ async function grabGames() {
         var data = await response.json()
         for (var i = 0; i < data.length; i++) {
             var element = data[i]
-            if (element.cover !== undefined && element.platforms !== undefined) {
+            if (element.cover !== undefined && element.genres !== undefined) {
                 ids.push(element.cover)
                 names.push({
                     name: element.name,
-                    platforms: element.platforms,
+                    genres: element.genres,
                     gameid: element.id,
                     coverid: element.cover,
                     url: element.url
@@ -86,11 +85,12 @@ function combineInfo(covers, names) {
         for (var j = 0; j < names.length; j++) {
             var element2 = names[j];
             if (element1.game === element2.gameid) {
-                combine.push({ name: element2, cover: element1.url })
+                combine.push({ name: element2.name, cover: element1.url, genres: element2.genres, url: element2.url})
             }
         }
     }
     gameArray = Array.from(combine)
+    convertGenreIDs()
     renderGames(combine)
 }
 
@@ -107,6 +107,8 @@ function renderGames(combined) {
             <input type="text" placeholder="Enter your answer here" class="useranswer">
         </form>
         <div class="score"></div>
+        <span class="answer"></span>
+        <span class="urls"></span>
     </section>`
     }
     gamecontainer.innerHTML = htmlstring;
@@ -131,11 +133,11 @@ document.getElementById("usersubmit").addEventListener("click", getAnswers)
 
 function compareAnswers() {
     const options = {
-        includeScore: true,
-        keys: ['name.name'],
+        includeScore: true
     }
-    const fuse = new Fuse(gameArray, options)
+
     for (let index = 0; index < gameArray.length; index++) {
+        const fuse = new Fuse(gameArray[index].genres, options)
         const element = gameArray[index];
         if (element.answer !== "") {
             const resultArr = fuse.search(element.answer)
@@ -149,14 +151,31 @@ function compareAnswers() {
     tallyUpScores()
 }
 
+function convertGenreIDs() {
+    for (var i = 0; i < gameArray.length; i++) {
+        var element = gameArray[i];
+        for (var j = 0; j < element.genres.length; j++) {
+            var currentGenreID = element.genres[j];
+            for (var k = 0; k < genres.length; k++) {
+                var currentGenre = genres[k];
+                if (currentGenreID === currentGenre.id) {
+                    element.genres[j] = currentGenre.name
+                }
+            }
+        }
+    }
+}
+
 function tallyUpScores() {
     var scoreArray = document.getElementsByClassName("score")
-    var gameQuizArr = document.getElementsByClassName("gamequiz")
+    var answerArray = document.getElementsByClassName("answer")
+    var urlArray = document.getElementsByClassName("urls")
     var numberCorrect = 0
     for (var i = 0; i < scoreArray.length; i++) {
         var element1 = scoreArray[i];
         var element2 = gameArray[i];
-        gameQuizArr[i].innerHTML+= `<span class="answer">Answer:</span>` + element2.name.name
+        answerArray[i].textContent = "Answer: " + element2.genres
+        urlArray[i].innerHTML = "<a target='_blank' href='" + element2.url + "'>Link</a>"
         if (element2.score < scorethreshold) {
             element1.innerHTML = `<span class="right">✔</span>`
             numberCorrect++
